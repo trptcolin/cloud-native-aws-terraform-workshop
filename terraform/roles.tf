@@ -32,6 +32,12 @@ resource "aws_iam_role_policy" "s3_bucket_policy" {
       "Action": ["s3:Get*", "s3:List*"],
       "Resource": ["arn:aws:s3:::trptcolin-terraform-workshop",
                    "arn:aws:s3:::trptcolin-terraform-workshop/*"]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [ "logs:CreateLogGroup", "logs:CreateLogStream",
+        "logs:PutLogEvents", "logs:DescribeLogStreams" ],
+      "Resource": [ "arn:aws:logs:*:*:*" ]
     }
   ]
 }

@@ -13,6 +13,7 @@ resource "aws_alb_target_group" "workshop_alb" {
   protocol = "HTTP"
   health_check {
     matcher = "200,301"
+    path = "/status.php"
   }
 }
 
@@ -42,6 +43,9 @@ resource "aws_launch_configuration" "workshop_launch_conf" {
   iam_instance_profile = "${aws_iam_instance_profile.workshop_profile.arn}" // key to being able to access s3 i guess?
   user_data = <<EOF
 #!/usr/bin/env bash
+aws s3 cp s3://trptcolin-terraform-workshop/credentials /etc/environment
+echo "export HTTP_DB_URI=${aws_db_instance.workshop_db.endpoint}" \
+  >> /etc/environment
 aws s3 cp s3://trptcolin-terraform-workshop/provision.sh /root/
 bash /root/provision.sh
 EOF

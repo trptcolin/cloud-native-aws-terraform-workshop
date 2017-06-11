@@ -106,3 +106,36 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_subnet" "db_subnet_1" {
+    vpc_id = "${aws_vpc.workshop_vpc.id}"
+    availability_zone = "us-east-1a"
+    cidr_block = "10.0.1.128/26"  // 10.0.1.128 -> 10.0.1.191
+    map_public_ip_on_launch = false
+}
+
+resource "aws_subnet" "db_subnet_2" {
+    vpc_id = "${aws_vpc.workshop_vpc.id}"
+    availability_zone = "us-east-1d"
+    cidr_block = "10.0.1.192/26" // 10.0.1.192 -> 10.0.1.255
+    map_public_ip_on_launch = false
+}
+
+resource "aws_db_subnet_group" "db_subnet_group" {
+    name = "db-subnet-group"
+    subnet_ids = ["${aws_subnet.db_subnet_1.id}",
+        "${aws_subnet.db_subnet_2.id}"]
+}
+
+resource "aws_security_group" "db" {
+  name = "db"
+  vpc_id = "${aws_vpc.workshop_vpc.id}"
+
+  ingress {
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    security_groups = [ "${aws_security_group.web_sg.id}",
+        "${aws_security_group.bastion_sg.id}" ]
+  }
+}
