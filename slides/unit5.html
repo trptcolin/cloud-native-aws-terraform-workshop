@@ -85,7 +85,7 @@
 
 output "sns.arn" {
     value = "${aws_sns_topic.workshop_alerts.arn}"
-}</code> 
+}</code>
 				</section>
 				<section>
 				  <h2>Subscribe to your topic</h2>
@@ -147,10 +147,10 @@ Then <code>terraform apply terraform</code>
         create_before_destroy = true
     }
     <i>iam_instance_profile =
-        "${aws_iam_instance_profile.workshop_profile.arn}"    
+        "${aws_iam_instance_profile.workshop_profile.arn}"
     user_data =  &lt;&lt;EOF
 #!/usr/bin/env bash
-aws s3 cp s3://18f-terraform-workshop/provision.sh /root/
+aws s3 cp s3://trptcolin-terraform-workshop/provision.sh /root/
 bash /root/provision.sh
 EOF</i></code></pre>
 				  <aside class="notes">
@@ -195,8 +195,8 @@ EOF
     {
       "Effect": "Allow",
       "Action": [ "s3:Get*", "s3:List*" ],
-      "Resource": [ "arn:aws:s3:::18f-terraform-workshop",
-                    "arn:aws:s3:::18f-terraform-workshop/*" ]
+      "Resource": [ "arn:aws:s3:::trptcolin-terraform-workshop",
+                    "arn:aws:s3:::trptcolin-terraform-workshop/*" ]
     }
   ]
 }

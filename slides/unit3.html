@@ -58,7 +58,7 @@
 				  <aside class="notes">
 				     Networks are subject to partitions. Eric Brewer's CAP theorem tells us that we must trade off consistency vs availability - if we want > 99.95% availability, we can't depend on AWS's multi-AZ primitives. This is not academic - a whole AWS region became unavailable. The Netflix blog post on the 2011 AWS outage is worth reading: http://techblog.netflix.com/2011/04/lessons-netflix-learned-from-aws-outage.html
 				  </aside>
-				</section>				
+				</section>
 				<section>
 				  <h2>Scaling horizontally</h2>
 				  <img src="images/nosql.png"/>
@@ -73,13 +73,13 @@
 				    <li class="fragment">Provisioning new hosts should be fully automated using versioned config.</li>
 				    <li class="fragment">Our infrastructure should automatically detect failures and kill.</li>
 				    <li class="fragment">If there's insufficient volatility, we should introduce more (e.g. chaos monkey).</li>
-				  </ul>				  
+				  </ul>
 				</section>
 				<section>
 				  <h2>Introduce failure</h2>
 				  <img src="images/chubby.jpg">
 				  <i>Site Reliability Engineering: How Google Runs Production Systems</i>, p39.
-				  </ul>				  
+				  </ul>
 				</section>
 				<section>
 				  <h2>Twelve Factor Apps</h2>

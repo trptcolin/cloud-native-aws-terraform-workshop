@@ -62,8 +62,8 @@ Then <code>terraform apply terraform</code>
     {
       "Effect": "Allow",
       "Action": [ "s3:Get*", "s3:List*" ],
-      "Resource": [ "arn:aws:s3:::18f-terraform-workshop",
-                    "arn:aws:s3:::18f-terraform-workshop/*" ]
+      "Resource": [ "arn:aws:s3:::trptcolin-terraform-workshop",
+                    "arn:aws:s3:::trptcolin-terraform-workshop/*" ]
     }<mark>,
     {
       "Effect": "Allow",
@@ -143,7 +143,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
         "${aws_security_group.bastion_sg.id}" ]
   }
 }
-</code></pre>				  
+</code></pre>
 				</section>
 				<section>
 				  <h2>Creating a Database</h2>
@@ -173,7 +173,7 @@ output "rds_instance_id" {
 				  <li class="fragment">We can get the DB connection string out of terraform</li>
 				  <li class="fragment">The password is more annoying</li>
 				  <li class="fragment">We'll set the password from the command line, then pass it in a file via S3</li>
-				  <aside class="notes">This is annoying. There is no instance profile equivalent to make creds magically appear on the host. This is probably not the best way but...</aside>				    
+				  <aside class="notes">This is annoying. There is no instance profile equivalent to make creds magically appear on the host. This is probably not the best way but...</aside>
 				</section>
 				<section>
 				  <h2>Setting Up the First Domino</h2>
@@ -191,10 +191,10 @@ output "rds_instance_id" {
 				  In the <code>aws_launch_configuration</code> section of <code>autoscale.tf</code>:
 				  <pre><code data-noescape>    user_data =  &lt;&lt;EOF
 #!/usr/bin/env bash
-<mark>aws s3 cp s3://18f-terraform-workshop/credentials /etc/environment
+<mark>aws s3 cp s3://trptcolin-terraform-workshop/credentials /etc/environment
 echo "export HTTP_DB_URI=${aws_db_instance.workshop_db.endpoint}" \
   >> /etc/environment</mark>
-aws s3 cp s3://18f-terraform-workshop/provision.sh /root/
+aws s3 cp s3://trptcolin-terraform-workshop/provision.sh /root/
 bash /root/provision.sh
 EOF</code></pre>
 Now <code>terraform apply terraform</code> and kill your auto scaling EC2 instances (again).
