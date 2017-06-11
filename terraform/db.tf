@@ -11,6 +11,7 @@ resource "aws_db_instance" "workshop_db" {
   publicly_accessible = false
   db_subnet_group_name = "${aws_db_subnet_group.db_subnet_group.id}"
   vpc_security_group_ids = [ "${aws_security_group.db.id}" ]
+  skip_final_snapshot = true
 }
 
 output "rds_instance_id" {
