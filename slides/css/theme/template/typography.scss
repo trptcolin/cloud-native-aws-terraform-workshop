@@ -1,0 +1,148 @@
+/* 04. Typography
+-------------------------------------------------------------- */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  color: $black;
+  margin: 0;
+}
+
+.reveal h1 {
+  font-size: 2em;
+  line-height: 1.333em;
+  margin-bottom: 0.5em;
+}
+
+.reveal h2 {
+  font-size: 1.3125em;
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
+  &.headline {
+    color: $medium-gray;
+    font-family: Fresco, Georgia, serif;
+    font-size: 1.8em;
+    font-style: italic;
+    font-weight: normal;
+    line-height: 1.4em;
+    margin-bottom: 0.68em;
+    &.light {
+      color: rgba(255,255,255,0.8);
+    }
+  }
+}
+
+.reveal h3 {
+  color: $medium-gray;
+  font-size: 1em;
+  line-height: 1.5em;
+  margin-bottom: 1em;
+}
+
+.reveal h4 {
+  color: $medium-gray;
+  font-family: 'Fresco Sans Small Caps', Helvetica, Arial, sans-serif;
+  font-size: 1.1em;
+  font-weight: normal;
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
+  text-transform: lowercase;
+  &.light {
+    color: $gray;
+    letter-spacing: 1px;
+  }
+}
+
+.reveal p {
+  font-size: 1em;
+  margin: 0 0 1.5em 0;
+  word-wrap: break-word;
+}
+
+.reveal em {
+  font-style: italic;
+}
+
+.reveal b {
+  color: $medium-gray;
+  font-weight: normal;
+}
+
+.reveal blockquote {
+  border-left: 5px solid #eef2f5;
+  margin: 1em 0 2em 0;
+  padding-left: 1em;
+  p {
+    margin: 0;
+  }
+  cite {
+    display: block;
+    font-family: Fresco, Georgia, serif;
+    font-style: italic;
+    padding: 1em 0 0 0;
+  }
+}
+
+.reveal abbr {
+  font-family: 'Fresco Sans Small Caps', Helvetica, Arial, sans-serif;
+  font-size: 1.1em;
+  text-transform: lowercase;
+}
+
+.reveal .tagline {
+  margin-top: 5em;
+  width: 350px;
+}
+
+.reveal a {
+  color: $light-blue;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.reveal code,
+.reveal kbd,
+.reveal pre,
+.reveal samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.reveal pre code {
+	display: block;
+	padding: 5px;
+	overflow: auto;
+	max-height: 400px;
+	word-wrap: normal;
+  text-align: left;
+}
+
+@mixin list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reveal ul {
+  @include list-reset;
+  li {
+    display: block;
+  }
+  &.airy li {
+    margin-bottom: 0.5em;
+  }
+}
+.reveal .list__inline {
+  @include list-reset;
+  overflow: hidden;
+  text-align: center;
+  li {
+    margin-bottom: 2em;
+    img {
+      display: block;
+      margin: 0 auto;
+      max-width: 180px;
+      width: 100%;
+    }
+  }
+}
+
