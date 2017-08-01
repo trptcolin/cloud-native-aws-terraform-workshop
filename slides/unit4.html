@@ -1,72 +1,76 @@
 
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/8thlight.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/8thlight.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
-				  <h2>Infrastructure as Code with Terraform and AWS</h2>
-				  <h2><em>Unit 4: Autoscaling Groups</em></h2>
-				  <p>This 18F <a href="https://github.com/18F/12-factor-aws-terraform-training">workshop</a> is in the worldwide public domain.</p>
-				</section>
-				<section>
-				  <h2>Learning objectives</h2>
-				  <ul>
-				    <li>Understand the architecture of auto scaling groups</li>
-				    <li>Know how to create an auto scaling group with Terraform</li>
-				    <li>Be able to configure hosts created by auto scaling groups</li>
-				  </ul>
-				</section>
-				<section>
-				  <img src="images/ha_aws_system.png" alt="system diagram" height="60%" width="60%" border="0"/>
-				  <aside class="notes">
-				    This is the networking infrastructure we will have built by the end of the class and the key components. Note this doesn't include monitoring, the S3 bucket we deploy from, or the security groups.
-				  </aside>
-				</section>
-				<section>
-				  <h2>Auto scaling groups</h2>
-				  <img src="http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/images/tutorial_as_elb_architecture.png" style="float:right" width="45%"/>
-				  <ul style="width:45%">
-				    <li class="fragment">At least two availability zones</li>
-				    <li class="fragment">Load balancer</li>
-				    <li class="fragment">Auto scaling group</li>
-				    <li class="fragment">Launch configuration</li>
-				  </ul>
-				</section>
-				<section>
-				  <h2>Elastic Load balancers in AWS</h2>
-				  <ul>
-				    <li class="fragment">Two types: classic and ALBs</li>
-				    <li class="fragment">ALB (application load balancer): route based on OSI layer 7</li>
-				    <li class="fragment">For example: headers, content, path</li>
-				    <li class="fragment">Also supports HTTP/2 and Websockets</li>
-				    <li class="fragment">ALBs also have request tracing (create a unique header per request)</li>
-				  </ul>
-				</section>
-				<section>
-				  <h2>Second availability zone</h2>
-				  <pre><code data-noescape>resource "aws_subnet" "public_subnet_2" {
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Infrastructure as Code with Terraform and AWS</h1>
+          <h2><em>Unit 4: Autoscaling Groups</em></h2>
+          <ul>
+            <li>Colin Jones, CTO at 8th Light</li>
+            <li><a href="https://twitter.com/trptcolin">@trptcolin</a></li>
+            <li>Workshops based on public domain materials by <a href="https://github.com/18F">18F</a></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Learning objectives</h2>
+          <ul>
+            <li>Understand the architecture of auto scaling groups</li>
+            <li>Know how to create an auto scaling group with Terraform</li>
+            <li>Be able to configure hosts created by auto scaling groups</li>
+          </ul>
+        </section>
+        <section>
+          <img src="images/ha_aws_system.png" alt="system diagram" height="60%" width="60%" border="0"/>
+          <aside class="notes">
+            This is the networking infrastructure we will have built by the end of the class and the key components. Note this doesn't include monitoring, the S3 bucket we deploy from, or the security groups.
+          </aside>
+        </section>
+        <section>
+          <h2>Auto scaling groups</h2>
+          <img src="http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/images/tutorial_as_elb_architecture.png" style="float:right" width="45%"/>
+          <ul style="width:45%">
+            <li class="fragment">At least two availability zones</li>
+            <li class="fragment">Load balancer</li>
+            <li class="fragment">Auto scaling group</li>
+            <li class="fragment">Launch configuration</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Elastic Load balancers in AWS</h2>
+          <ul>
+            <li class="fragment">Two types: classic and ALBs</li>
+            <li class="fragment">ALB (application load balancer): route based on OSI layer 7</li>
+            <li class="fragment">For example: headers, content, path</li>
+            <li class="fragment">Also supports HTTP/2 and Websockets</li>
+            <li class="fragment">ALBs also have request tracing (create a unique header per request)</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Second availability zone</h2>
+          <pre><code data-noescape>resource "aws_subnet" "public_subnet_2" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
     availability_zone = "us-east-1d"
     cidr_block = "<mark>10.0.X.64/26</mark>"
@@ -76,13 +80,13 @@ resource "aws_route_table_association" "route_subnet_2" {
     subnet_id = "${aws_subnet.public_subnet_2.id}"
     route_table_id = "${aws_route_table.workshop_route_table.id}"
 }</code></pre>
-				  <aside class="notes">
-				    Don't forget to add a route for it...
-				  </aside>
-				</section>
-				<section>
-				  <h2>Security groups: ALB</h2>
-				  <pre><code data-noescape>resource "aws_security_group" "alb_sg" {
+          <aside class="notes">
+            Don't forget to add a route for it...
+          </aside>
+        </section>
+        <section>
+          <h2>Security groups: ALB</h2>
+          <pre><code data-noescape>resource "aws_security_group" "alb_sg" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
 
     ingress {
@@ -99,10 +103,10 @@ resource "aws_route_table_association" "route_subnet_2" {
         cidr_blocks = ["<mark>10.0.X.0/24</mark>"]
     }
 }</code></pre>
-				</section>
-				<section>
-				  <h2>Security groups: Web hosts</h2>
-				  <pre><code data-noescape>resource "aws_security_group" "web_sg" {
+        </section>
+        <section>
+          <h2>Security groups: Web hosts</h2>
+          <pre><code data-noescape>resource "aws_security_group" "web_sg" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
 
     ingress {
@@ -119,19 +123,19 @@ resource "aws_route_table_association" "route_subnet_2" {
         cidr_blocks = ["0.0.0.0/0"]
     }
 }</code></pre>
-				</section>
-				<section>
-				  <h2>Security groups: Web hosts (pt 2)</h2>
-				  <pre><code data-noescape>    ingress {
+        </section>
+        <section>
+          <h2>Security groups: Web hosts (pt 2)</h2>
+          <pre><code data-noescape>    ingress {
         from_port = 22
         to_port = 22
         protocol = "tcp"
         security_groups = [ "${aws_security_group.bastion_sg.id}" ]
     }</code></pre>
-				</section>
-				<section>
-				  <h2>Application load balancer</h2>
-				  <pre><code data-noescape>resource "aws_alb" "workshop_alb" {
+        </section>
+        <section>
+          <h2>Application load balancer</h2>
+          <pre><code data-noescape>resource "aws_alb" "workshop_alb" {
   name = "workshop-alb-<mark>[name]</mark>"
   subnets = ["${aws_subnet.public_subnet_1.id}",
              "${aws_subnet.public_subnet_2.id}"]
@@ -148,12 +152,12 @@ resource "aws_alb_target_group" "workshop_alb" {
   }
 }
 </code></pre>
-				  <aside class="notes">
-				    Note - the target group is not going to show healthy at first. The default install page on Apache httpd sends you a 403. 403 is not a valid "heatlhy" code for a target group.
-				  </aside>
-				</section>
-				<section>
-				  <h2>ALB target group</h2>
+          <aside class="notes">
+            Note - the target group is not going to show healthy at first. The default install page on Apache httpd sends you a 403. 403 is not a valid "heatlhy" code for a target group.
+          </aside>
+        </section>
+        <section>
+          <h2>ALB target group</h2>
 <pre><code data-noescape>resource "aws_alb_listener" "workshop_alb_http" {
   load_balancer_arn = "${aws_alb.workshop_alb.arn}"
   port = 80
@@ -170,10 +174,10 @@ output "alb.dns" {
   <aside class="notes">
     The output variable <code>dns_name</code> gives us the FQDN of the load balancer. This is a major advantage of using ELBs - no IP addresses in your DNS entries.
   </aside>
-				</section>
-				<section>
-				  <h2>Launch configuration</h2>
-				  <pre><code data-noescape>resource "aws_launch_configuration" "workshop_launch_conf" {
+        </section>
+        <section>
+          <h2>Launch configuration</h2>
+          <pre><code data-noescape>resource "aws_launch_configuration" "workshop_launch_conf" {
     image_id = "ami-c481fad3"
     instance_type = "t2.micro"
     key_name = "<mark>[key name]</mark>"
@@ -189,10 +193,10 @@ yum install -y httpd24
 service httpd start
 EOF
 }</code></pre>
-				</section>
-				<section>
-				  <h2>Auto Scaling Group</h2>
-				  <pre><code data-noescape>resource "aws_autoscaling_group" "workshop_autoscale" {
+        </section>
+        <section>
+          <h2>Auto Scaling Group</h2>
+          <pre><code data-noescape>resource "aws_autoscaling_group" "workshop_autoscale" {
     vpc_zone_identifier = ["${aws_subnet.public_subnet_1.id}",
                            "${aws_subnet.public_subnet_2.id}"]
     min_size = 2
@@ -203,38 +207,38 @@ EOF
     target_group_arns = ["${aws_alb_target_group.workshop_alb.arn}"]
     enabled_metrics = ["GroupInServiceInstances"]
 }</code></pre>
-				</section>
-				<section>
-				  <h2>Unit 4 review</h2>
-				  <ul>
-				    <li class="fragment">We stood up an AWS load balancer and autoscale group</li>
-				    <li class="fragment">We deployed all the infrastructure required for a highly available web app</li>
-				    <li class="fragment">We provisioned everything purely from versioned Terraform config</li>
-				  </ul>
-				</section>
-				<section>
-				  <a href="unit5.html">Unit 5</a>
-				</section>
+        </section>
+        <section>
+          <h2>Unit 4 review</h2>
+          <ul>
+            <li class="fragment">We stood up an AWS load balancer and autoscale group</li>
+            <li class="fragment">We deployed all the infrastructure required for a highly available web app</li>
+            <li class="fragment">We provisioned everything purely from versioned Terraform config</li>
+          </ul>
+        </section>
+        <section>
+          <a href="unit5.html">Unit 5</a>
+        </section>
 
-			</div>
-		</div>
+      </div>
+    </div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
 
-		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
 </html>
