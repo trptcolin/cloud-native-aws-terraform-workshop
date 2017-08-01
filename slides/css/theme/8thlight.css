@@ -1,0 +1,151 @@
+@import url(../../fonts/8L_fonts.css);
+body {
+  color: #555555;
+  font-family: "Lato", "Fresco Sans", "Helvetica", "Arial", sans-serif;
+  font-size: 112%;
+  font-weight: 300;
+  line-height: 1.5em; }
+
+.reveal ul {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .reveal ul li {
+    display: block; }
+  .reveal ul.airy li {
+    margin-bottom: 0.5em; }
+
+.reveal .list__inline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: center; }
+  .reveal .list__inline li {
+    margin-bottom: 2em; }
+    .reveal .list__inline li img {
+      display: block;
+      margin: 0 auto;
+      max-width: 180px;
+      width: 100%; }
+
+/* 04. Typography
+-------------------------------------------------------------- */
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  color: #29323c;
+  margin: 0; }
+
+.reveal h1 {
+  font-size: 2em;
+  line-height: 1.333em;
+  margin-bottom: 0.5em; }
+
+.reveal h2 {
+  font-size: 1.3125em;
+  line-height: 1.5em;
+  margin-bottom: 0.5em; }
+  .reveal h2.headline {
+    color: #626e7a;
+    font-family: Fresco, Georgia, serif;
+    font-size: 1.8em;
+    font-style: italic;
+    font-weight: normal;
+    line-height: 1.4em;
+    margin-bottom: 0.68em; }
+    .reveal h2.headline.light {
+      color: rgba(255, 255, 255, 0.8); }
+
+.reveal h3 {
+  color: #626e7a;
+  font-size: 1em;
+  line-height: 1.5em;
+  margin-bottom: 1em; }
+
+.reveal h4 {
+  color: #626e7a;
+  font-family: 'Fresco Sans Small Caps', Helvetica, Arial, sans-serif;
+  font-size: 1.1em;
+  font-weight: normal;
+  line-height: 1.5em;
+  margin-bottom: 0.5em;
+  text-transform: lowercase; }
+  .reveal h4.light {
+    color: #8894a0;
+    letter-spacing: 1px; }
+
+.reveal p {
+  font-size: 1em;
+  margin: 0 0 1.5em 0;
+  word-wrap: break-word; }
+
+.reveal em {
+  font-style: italic; }
+
+.reveal b {
+  color: #626e7a;
+  font-weight: normal; }
+
+.reveal blockquote {
+  border-left: 5px solid #eef2f5;
+  margin: 1em 0 2em 0;
+  padding-left: 1em; }
+  .reveal blockquote p {
+    margin: 0; }
+  .reveal blockquote cite {
+    display: block;
+    font-family: Fresco, Georgia, serif;
+    font-style: italic;
+    padding: 1em 0 0 0; }
+
+.reveal abbr {
+  font-family: 'Fresco Sans Small Caps', Helvetica, Arial, sans-serif;
+  font-size: 1.1em;
+  text-transform: lowercase; }
+
+.reveal .tagline {
+  margin-top: 5em;
+  width: 350px; }
+
+.reveal a {
+  color: #27a8e0;
+  text-decoration: none; }
+  .reveal a:hover {
+    text-decoration: underline; }
+
+.reveal code,
+.reveal kbd,
+.reveal pre,
+.reveal samp {
+  font-family: monospace, monospace;
+  font-size: 1em; }
+
+.reveal pre code {
+  display: block;
+  padding: 5px;
+  overflow: auto;
+  max-height: 400px;
+  word-wrap: normal;
+  text-align: left; }
+
+.reveal ul {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .reveal ul li {
+    display: block; }
+  .reveal ul.airy li {
+    margin-bottom: 0.5em; }
+
+.reveal .list__inline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  text-align: center; }
+  .reveal .list__inline li {
+    margin-bottom: 2em; }
+    .reveal .list__inline li img {
+      display: block;
+      margin: 0 auto;
+      max-width: 180px;
+      width: 100%; }

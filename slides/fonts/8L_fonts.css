@@ -1,0 +1,58 @@
+@font-face {
+  font-family: 'Fresco Sans';
+  src: url('fresco-sans-regular.eot');
+  src: url('fresco-sans-regular.eot?#iefix') format('embedded-opentype'),
+    url('fresco-sans-regular.woff') format('woff'),
+    url('fresco-sans-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fresco Sans';
+  src: url('fresco-sans-italic.eot');
+  src: url('fresco-sans-italic.eot?#iefix') format('embedded-opentype'),
+    url('fresco-sans-italic.woff') format('woff'),
+    url('fresco-sans-italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fresco Sans';
+  src: url('fresco-sans-bold.eot');
+  src: url('fresco-sans-bold.eot?#iefix') format('embedded-opentype'),
+    url('fresco-sans-bold.woff') format('woff'),
+    url('fresco-sans-bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fresco Sans Small Caps';
+  src: url('fresco-sans-smallcaps.eot');
+  src: url('fresco-sans-smallcaps.eot?#iefix') format('embedded-opentype'),
+    url('fresco-sans-smallcaps.woff') format('woff'),
+    url('fresco-sans-smallcaps.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Fresco';
+  src: url('fresco-regular.eot');
+  src: url('fresco-regular.eot?#iefix') format('embedded-opentype'),
+    url('fresco-regular.woff') format('woff'),
+    url('fresco-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fresco';
+  src: url('fresco-italic.eot');
+  src: url('fresco-italic.eot?#iefix') format('embedded-opentype'),
+    url('fresco-italic.woff') format('woff'),
+    url('fresco-italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+

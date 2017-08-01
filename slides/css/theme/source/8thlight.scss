@@ -1,0 +1,51 @@
+$body-font: "Lato", "Fresco Sans", "Helvetica", "Arial", sans-serif;
+$body-font__serif: "Fresco", Georgia, serif;
+$body-font-color: #555555;
+
+$black: #29323c;
+$light-blue: #27a8e0;
+$medium-gray: #626e7a;
+$gray: #8894a0;
+
+body {
+  color: $body-font-color;
+  font-family: $body-font;
+  font-size: 112%;
+  font-weight: 300;
+  line-height: 1.5em;
+}
+
+@mixin list-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reveal ul {
+  @include list-reset;
+  li {
+    display: block;
+  }
+  &.airy li {
+    margin-bottom: 0.5em;
+  }
+}
+.reveal .list__inline {
+  @include list-reset;
+  overflow: hidden;
+  text-align: center;
+  li {
+    margin-bottom: 2em;
+    img {
+      display: block;
+      margin: 0 auto;
+      max-width: 180px;
+      width: 100%;
+    }
+  }
+}
+
+
+@import "../template/typography";
+
+@import url(../../fonts/8L_fonts.css);
