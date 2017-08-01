@@ -1,107 +1,126 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/8thlight.css">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/8thlight.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
-				  <h2>Infrastructure as Code with Terraform and AWS</h2>
-				  <h2><em>Unit 1: Introduction</em></h2>
-				  <p>This 18F <a href="https://github.com/18F/12-factor-aws-terraform-training">workshop</a> is in the worldwide public domain.</p>
-				</section>
-				<section>
-				  <h2>Learning objectives</h2>
-				  <ul>
-				    <li>Understand the cloud</li>
-				    <li>Understand infrastructure-as-code</li>
-				    <li>Understand how to build cloud native apps</li>
-				  </ul>
-				</section>
-				<section>
-				  <h2>The Cloud</h2>
-				  <img src="https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAcXAAAAJDk4NzZmMDdkLWU0YzEtNGJjMi05MWU2LTExODZlMzcxN2E5Mw.jpg" alt="There is no cloud: it's just someone else's computer"/>
-				</section>
-				<section>
-				  <h2>The Cloud: NIST</h2>
-				  <blockquote cite="https://www.nist.gov/news-events/news/2011/10/final-version-nist-cloud-computing-definition-published">
-				    &ldquo;The NIST definition lists five essential characteristics of cloud computing: on-demand self-service, broad network access, resource pooling, rapid elasticity or expansion, and measured service. It also lists three "service models" (software, platform and infrastructure), and four "deployment models" (private, community, public and hybrid) that together categorize ways to deliver cloud services.&rdquo;
-				  </blockquote>
-				  (See NIST SP 800-145 for more)
-				</section>
-				<section>
-				  <h2>The Cloud</h2>
-				  <p>Like having your own datacenter, but:</p>
-				  <ul>
-				    <li class="fragment">With an API (if there's no API, it's not a real cloud)</li>
-				    <li class="fragment">The illusion of infinite resources</li>
-				    <li class="fragment">No capital costs: pay based on usage</li>
-				  </ul>
-				</section>
-				<section>
-				  <h2>AWS Free Tier</h2>
-				  <img src="https://continuousdelivery.com/images/aws_free_tier.jpg"/>
-				</section>
-				<section>
-				  <h2>Infrastructure-as-Code</h2>
-				  <ul>
-				    <li class="fragment">Specify desired state in version control</li>
-				    <li class="fragment">Apply XP practices like TDD, refactoring</li>
-				    <li class="fragment">Continuous delivery for your infrastructure</li>
-				    <li class="fragment">Term coined by Andrew Shafer</li>				    
-				  </ul>
-				</section>
-				<section>
-				  <h2>Infrastructure-as-Code: Benefits</h2>
-				  <ul>
-				    <li class="fragment">Versioned infrastructure!</li>
-				    <li class="fragment">Reduce the risk of changes</li>
-				    <li class="fragment">Predictable time to restore service</li>
-				    <li class="fragment">Audit history</li>
-				    <li class="fragment">Implement controls from NIST 800-53 CM and CP families</li>				    
-				  </ul>
-				  </section>
-				  <section>
-				    <a href="unit2.html">Unit 2</a>
-				  </section>
-			</div>
-		</div>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+          <h1>Infrastructure as Code with Terraform and AWS</h1>
+          <h2><em>Unit 1: Introduction</em></h2>
 
-		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+          <ul>
+            <li>Colin Jones, CTO at 8th Light</li>
+            <li><a href="https://twitter.com/trptcolin">@trptcolin</a></li>
+            <li>Workshops based on public domain materials by <a href="https://github.com/18F">18F</a></li>
+          </ul>
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+          <aside class="notes">
+            My goal is not to assume anything about what you know about AWS or any other cloud provider, or Terraform and any other infrastructure code.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Learning objectives</h2>
+          <ul>
+            <li>Understand the cloud</li>
+            <li>Understand infrastructure as code</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>The Cloud</h2>
+          <img src="https://media.licdn.com/mpr/mpr/AAEAAQAAAAAAAAcXAAAAJDk4NzZmMDdkLWU0YzEtNGJjMi05MWU2LTExODZlMzcxN2E5Mw.jpg" alt="There is no cloud: it's just someone else's computer"/>
+        </section>
+
+        <section>
+          <h2>The Cloud: NIST</h2>
+          <blockquote cite="https://www.nist.gov/news-events/news/2011/10/final-version-nist-cloud-computing-definition-published">
+            &ldquo;The NIST definition lists five essential characteristics of cloud computing: on-demand self-service, broad network access, resource pooling, rapid elasticity or expansion, and measured service. It also lists three "service models" (software, platform and infrastructure), and four "deployment models" (private, community, public and hybrid) that together categorize ways to deliver cloud services.&rdquo;
+          </blockquote>
+          (See <a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-145.pdf">NIST SP 800-145</a> for more)
+        </section>
+
+        <section>
+          <h2>The Cloud</h2>
+          <p>Like having your own datacenter, but:</p>
+          <ul>
+            <li class="fragment">With an API</li>
+            <li class="fragment">The illusion of infinite resources</li>
+            <li class="fragment">No capital costs: pay based on usage</li>
+          </ul>
+
+          <aside class="notes">
+            <li>Doesn't necessarily mean it's cheaper, but there are a bunch of benefits to paying as you go:</li>
+          </aside>
+        </section>
+
+        <section>
+          <h2>AWS Free Tier</h2>
+          <img src="https://continuousdelivery.com/images/aws_free_tier.jpg"/>
+        </section>
+
+        <section>
+          <h2>Infrastructure as Code</h2>
+          <ul>
+            <li class="fragment">Specify desired state in version control</li>
+            <li class="fragment">Apply XP practices like TDD, refactoring</li>
+            <li class="fragment">Continuous delivery for your infrastructure</li>
+            <li class="fragment">Term coined by Andrew Shafer</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Infrastructure-as-Code: Benefits</h2>
+          <ul>
+            <li class="fragment">Versioned infrastructure!</li>
+            <li class="fragment">Reduce the risk of changes</li>
+            <li class="fragment">Predictable time to restore service</li>
+            <li class="fragment">Audit history</li>
+          </ul>
+          </section>
+          <section>
+            <a href="unit2.html">Unit 2</a>
+          </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
 </html>
