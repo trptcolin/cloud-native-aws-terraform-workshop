@@ -29,6 +29,9 @@ body {
       max-width: 180px;
       width: 100%; }
 
+.reveal ol {
+  list-style-position: inside; }
+
 /* 04. Typography
 -------------------------------------------------------------- */
 .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
