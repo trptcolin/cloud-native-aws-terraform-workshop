@@ -55,7 +55,16 @@ aws ec2 import-key-pair --key-name <mark>[key name]</mark> \
           (replace <mark>highlighted sections</mark> with the correct values).
         </section>
         <section>
-          <h2>Your first terraform file</h2>
+          <h2>Terraform</h2>
+          <ul>
+            <li>Infrastructure-as-code automation tool by Hashicorp (<a href="https://www.terraform.io/">https://www.terraform.io/</a>)</li>
+            <li>Providers for many services, including AWS, Google Cloud, DNSimple, DigitalOcean, ...</li>
+            <li>Separates planning from execution</li>
+            <li>Step 1: create a directory called <code>terraform</code></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Your first terraform file (terraform/terraform.tf)</h2>
           <pre><code data-noescape>resource "aws_vpc" "workshop_vpc" {
     cidr_block = "<mark>10.0.X.0/24</mark>"
 }
@@ -80,11 +89,11 @@ resource "aws_instance" "bastion" {
         <section>
           <h2>Run Terraform</h2>
           <ul>
-            <li>Create a directory called <code>terraform</code></li>
             <li>Save the file as <code>terraform/terraform.tf</code></li>
             <li>Run <code>terraform apply terraform</code></li>
             <li><code>grep '"id": "i-.*"' terraform.tfstate</code></li>
-            <li>Go find your new EC2 instance in the console</li>
+            <li>Run <code>aws ec2 describe-instances --instance-ids <mark>ID_HERE</mark> | grep PublicIp</code></li>
+            <li>(... or look for the instance in the AWS Console: <a href="https://console.aws.amazon.com">https://console.aws.amazon.com</a>)</li>
             <li>Try pinging it! Hmmm...</li>
           </ul>
           <aside class="notes">
@@ -103,10 +112,10 @@ resource "aws_instance" "bastion" {
           <h2>Terraform state</h2>
           <ul>
             <li>You've seen a file called <code>terraform.tfstate</code></li>
-            <li>By default Terraform stores state locally</li>
-            <li>For a real project, you'll store it in an S3 bucket</li>
+            <li>By default Terraform stores state locally.</li>
+            <li>For a real project, you might choose to store it in an S3 bucket</li>
             <li><pre><code>terraform remote config -backend=s3 \
-  -backend-config="bucket=[unique_bucket_name]" \
+  -backend-config="bucket=[globally_unique_bucket_name]" \
   -backend-config="key=network/terraform.tfstate" \
   -backend-config="region=us-east-1"</code></pre></li>
             <li>If your state file is deleted or corrupted...</li>
@@ -118,39 +127,44 @@ resource "aws_instance" "bastion" {
         </section>
         <section>
           <h2>Networking</h2>
-          We created an instance, but we can't connect to it. To do that, we need to understand how networking is modeled in AWS. We'll start with regions and availability zones.
+          We created an instance, but we couldn't connect to it. To do that, we'll need to understand how networking is modeled in AWS. Let's start with regions and availability zones.
 
           <aside class="notes">
             In fact, a fresh AWS account gives you a default VPC with some stuff set up in it so you can create internet routable hosts from the beginning - but we won't be using that.
           </aside>
         </section>
         <section>
-          <h2>AWS datacenters ("regions")</h2>
-          <img src="https://d0.awsstatic.com/Test%20Images/Kate%20Test%20Images/Global_Infrastructure_kwV21.png" alt="AWS's datacenters"/>
+          <h2>AWS Regions</h2>
+          <img style="width:100%;" src="https://d0.awsstatic.com/Test%20Images/Kate%20Test%20Images/Global_Infrastructure_kwV21.png" alt="AWS's datacenters"/>
           <aside class="notes">
             AWS "regions" are completely independent, and function as virtual datacenters (in reality, they're comprised of multiple physical datacenters). Traffic between them goes over the public internet.
+            Green means "coming soon", Numbers mean "N data centers within the region"
           </aside>
                                 </section>
         <section>
-          <h2>Availability zones</h2>
+          <h2>Availability zones (AZs)</h2>
           Availability zones within regions are isolated, but have low latency links between them.
           <img src="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/images/aws_regions.png" alt="AWS's datacenters"/>
-                                </section>
+          <p>AWS defines Availability Zones as consisting of *one or more* discrete data centers.</p>
+        </section>
+
         <section>
           <h2>VPCs, subnets, and routes</h2>
           <img src="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/images/custom-route-table-diagram.png" style="float:right" width="45%"/>
           <ul style="width:45%">
-            <li class="fragment">Instances always launched in a subnet</li>
-            <li class="fragment">Subnets always associated with an AZ and a VPC</li>
-            <li class="fragment">Routers always associated with a VPC and one or more subnets</li>
-            <li class="fragment">You need a gateway to get anywhere</li>
+            <li class="fragment">VPC ("Virtual Private Cloud")</li>
+            <li class="fragment">A VPC may have many subnets</li>
+            <li class="fragment">Instances are always launched in a subnet</li>
+            <li class="fragment">Subnets are always associated with an AZ and a VPC</li>
+            <li class="fragment">Routes are always associated with a VPC and one or more subnets</li>
+            <li class="fragment">You need a gateway to get outside</li>
           </ul>
         </section>
         <section>
           <h2>Let's add a gateway & route table</h2>
-          <pre><code>resource "aws_internet_gateway" "workshop_gw" {
-    vpc_id = "${aws_vpc.workshop_vpc.id}"
-}
+          <pre><code>provider "aws" { region = "us-east-1" }
+
+resource "aws_internet_gateway" "workshop_gw" { vpc_id = "${aws_vpc.workshop_vpc.id}" }
 
 resource "aws_route_table" "workshop_route_table" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
@@ -168,7 +182,7 @@ resource "aws_route_table_association" "route_subnet_1" {
         <section>
           <h2>OK let's network!</h2>
           <ul>
-            <li><code>terraform plan</code></li>
+            <li><code>terraform plan terraform</code></li>
             <li>How cool is that!</li>
             <li><code>terraform apply terraform</code></li>
             <li>(Note: <code>terraform apply</code> is idempotent)</li>
@@ -179,9 +193,14 @@ resource "aws_route_table_association" "route_subnet_1" {
           <h2>Security groups</h2>
           <ul>
             <li class="fragment">A security group is like a firewall.</li>
-            <li class="fragment">They can be attached to multiple AWS resource types</li>
-            <li class="fragment">By default, VPCs come with a security group that allows egress but not ingress</li>
+            <li class="fragment">They can be attached to multiple AWS resource types.</li>
+            <li class="fragment">By default, VPCs come with a security group that allows egress but not ingress.</li>
+            <li class="fragment">(egress aka outgoing; ingress aka incoming)</li>
           </ul>
+
+          <aside class="notes">
+            You can only *whitelist* traffic w/ security groups, need NACLs for blacklisting
+          </aside>
         </section>
         <section>
           <h2>Let's add a security group</h2>
@@ -196,6 +215,10 @@ resource "aws_route_table_association" "route_subnet_1" {
     }
 }
 </code></pre>
+
+          <aside class="notes">
+            Why from_port = 8? special rules for ICMP, see docs: https://www.terraform.io/docs/providers/aws/r/security_group.html
+          </aside>
         </section>
         <section>
           <h2>Now attach it to our instance</h2>
@@ -240,6 +263,7 @@ resource "aws_route_table_association" "route_subnet_1" {
           <ul>
             <li><code>terraform apply terraform</code></li>
             <li>Now we can see out.</li>
+            <li><code>ssh ec2-user@<mark>IP_ADDRESS_HERE</mark> -i ~/.ssh/aws</code></li>
             <li>By default, AWS lets you egress - but Terraform turns this off unless you declare it explicitly.</li>
           </ul>
         </section>
