@@ -83,7 +83,9 @@ resource "aws_instance" "bastion" {
     instance_type = "t2.micro"
 }</code></pre>
           <aside class="notes">
+            CIDR notation: IP/SUBNET_MASK. /32 means a specific IP address.
             In a VPC, the max hosts you can create is a /16. So if you want to peer with another VPC, you'll want to start with, say, a /24.
+
           </aside>
         </section>
         <section>
@@ -247,7 +249,9 @@ resource "aws_route_table_association" "route_subnet_1" {
           <ul>
             <li><code>terraform apply terraform</code></li>
             <li>...and now we can ssh in too!</li>
-            <li>Once you're in, try pinging Google</li>
+            <li><code>ssh ec2-user@<mark>IP_ADDRESS_HERE</mark> -i ~/.ssh/aws</code></li>
+            <li>Once you're in, try pinging Google: <code>ping google.com</code></li>
+            <li>... or updating packages: <code>sudo yum update -y</code></li>
             <li>Hmmm...</li>
           </ul>
         </section>
@@ -263,18 +267,21 @@ resource "aws_route_table_association" "route_subnet_1" {
           <ul>
             <li><code>terraform apply terraform</code></li>
             <li>Now we can see out.</li>
-            <li><code>ssh ec2-user@<mark>IP_ADDRESS_HERE</mark> -i ~/.ssh/aws</code></li>
             <li>By default, AWS lets you egress - but Terraform turns this off unless you declare it explicitly.</li>
           </ul>
+          <aside class="notes">
+            Strictly speaking, "egress" (outgoing traffic) was already happening within the SSH connection: bits were streaming back to our laptops over the wire.
+          </aside>
         </section>
         <section>
           <h2>Unit 2 review</h2>
           <ul>
             <li class="fragment">We have a VPC, a subnet in an AZ, a gateway, route table, security group...</li>
             <li class="fragment">...and a host. <span class="fragment">That we can reach.</span></li>
-            <li class="fragment">We've understood all the basics of AWS networking</li>
+            <li class="fragment">We've understood the basics of AWS networking</li>
             <li class="fragment">By adding block storage (EBS), we can "lift and shift"</li>
             <li class="fragment">However there is a cloud on the horizon...</li>
+            <li class="fragment">But that's a story for another day.</li>
           </ul>
         </section>
         <section>
