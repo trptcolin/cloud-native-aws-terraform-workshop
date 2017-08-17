@@ -30,7 +30,7 @@
           <ul>
             <li>Colin Jones, CTO at 8th Light</li>
             <li><a href="https://twitter.com/trptcolin">@trptcolin</a></li>
-            <li>Workshops based on public domain materials by <a href="https://github.com/18F">18F</a></li>
+            <li>based on <a href="https://github.com/18F">18F</a>'s public-domain workshop</li>
           </ul>
         </section>
         <section>
@@ -66,13 +66,13 @@ aws ec2 import-key-pair --key-name <mark>[key name]</mark> \
         <section>
           <h2>Your first terraform file (terraform/terraform.tf)</h2>
           <pre><code data-noescape>resource "aws_vpc" "workshop_vpc" {
-    cidr_block = "<mark>10.0.X.0/24</mark>"
+    cidr_block = "10.0.1.0/24"
 }
 
 resource "aws_subnet" "public_subnet_1" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
     availability_zone = "us-east-1a"
-    cidr_block = "<mark>10.0.X.0/26</mark>"
+    cidr_block = "10.0.1.0/26"
 }
 
 resource "aws_instance" "bastion" {
@@ -85,7 +85,8 @@ resource "aws_instance" "bastion" {
           <aside class="notes">
             CIDR notation: IP/SUBNET_MASK. /32 means a specific IP address.
             In a VPC, the max hosts you can create is a /16. So if you want to peer with another VPC, you'll want to start with, say, a /24.
-
+            /24 means the first 24 bits are set ("masked"). 8 bits left, so /24 == 0-255 (minus 5 reserved IPs)
+            /26 means the first 26 bits are set. 6 bits left, so /26 == 0-63 (minus 5 reserved IPs)
           </aside>
         </section>
         <section>
@@ -129,7 +130,11 @@ resource "aws_instance" "bastion" {
         </section>
         <section>
           <h2>Networking</h2>
-          We created an instance, but we couldn't connect to it. To do that, we'll need to understand how networking is modeled in AWS. Let's start with regions and availability zones.
+          <ul>
+            <li>
+              We created an instance, but we couldn't connect to it. To do that, we'll need to understand how networking is modeled in AWS. Let's start with regions and availability zones.
+            </li>
+          </ul>
 
           <aside class="notes">
             In fact, a fresh AWS account gives you a default VPC with some stuff set up in it so you can create internet routable hosts from the beginning - but we won't be using that.
