@@ -13,5 +13,7 @@ css/reveal.min.css
 js/reveal.min.js
 *.tar.bz2
 
+slides/css/theme/*.css
+
 *.tfstate
 *.tfstate.backup

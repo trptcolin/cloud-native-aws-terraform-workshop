@@ -25,6 +25,7 @@ body {
   @include list-reset;
   li {
     display: block;
+    line-height: 2em;
   }
   &.airy li {
     margin-bottom: 0.5em;
