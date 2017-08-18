@@ -21,11 +21,15 @@ body {
   padding: 0;
 }
 
+.reveal p, .reveal li {
+  line-height: 1em;
+  margin: 1em 0;
+}
+
 .reveal ul {
   @include list-reset;
   li {
     display: block;
-    line-height: 2em;
   }
   &.airy li {
     margin-bottom: 0.5em;
@@ -50,6 +54,9 @@ body {
   list-style-position: inside;
 }
 
+.reveal pre code {
+  margin: 20px;
+}
 
 @import "../template/typography";
 
