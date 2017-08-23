@@ -25,8 +25,8 @@
     <div class="reveal">
       <div class="slides">
         <section>
-          <h1>Infrastructure as Code with Terraform and AWS</h1>
-          <h2><em>Unit 6: Databases</em></h2>
+          <h1>AWS / Terraform Workshop Series #4</h1>
+          <h2>Databases</h2>
           <ul>
             <li>Colin Jones, CTO at 8th Light</li>
             <li><a href="https://twitter.com/trptcolin">@trptcolin</a></li>
@@ -34,7 +34,7 @@
           </ul>
         </section>
         <section>
-          <h2>Learning objectives</h2>
+          <h2>Today's Goals</h2>
           <ul>
             <li>Understand how to build highly available databases with RDS</li>
             <li>Know how to pass credentials to running apps</li>
@@ -252,6 +252,12 @@ Now <code>terraform apply terraform</code> and kill your auto scaling EC2 instan
       // More info https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
         history: true,
+
+        width: "95%",
+        height: "100%",
+        margin: 0,
+        minScale: 1,
+        maxScale: 1,
 
         // More info https://github.com/hakimel/reveal.js#dependencies
         dependencies: [
