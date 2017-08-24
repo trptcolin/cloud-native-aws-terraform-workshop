@@ -1,11 +1,19 @@
+provider "aws" { region = "us-east-1" }
+
 resource "aws_vpc" "workshop_vpc" {
     cidr_block = "10.0.1.0/24"
+    tags {
+      Name = "TerraformWorkshopVPC"
+    }
 }
 
 resource "aws_subnet" "public_subnet_1" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
     availability_zone = "us-east-1a"
     cidr_block = "10.0.1.0/26"
+    tags {
+      Name = "PublicSubnet1"
+    }
 }
 
 resource "aws_instance" "bastion" {
@@ -15,12 +23,16 @@ resource "aws_instance" "bastion" {
     key_name = "Colins-Test-Key"
     instance_type = "t2.micro"
     vpc_security_group_ids = ["${aws_security_group.bastion_sg.id}"]
+    tags {
+      Name = "BastionHost"
+    }
 }
-
-provider "aws" { region = "us-east-1" }
 
 resource "aws_internet_gateway" "workshop_gw" {
   vpc_id = "${aws_vpc.workshop_vpc.id}"
+  tags {
+    Name = "WorkshopGateway"
+  }
 }
 
 resource "aws_route_table" "workshop_route_table" {
@@ -28,6 +40,9 @@ resource "aws_route_table" "workshop_route_table" {
     route {
         cidr_block = "0.0.0.0/0"
         gateway_id = "${aws_internet_gateway.workshop_gw.id}"
+    }
+    tags {
+      Name = "WorkshopPublicRouteTable"
     }
 }
 
@@ -58,5 +73,9 @@ resource "aws_security_group" "bastion_sg" {
         to_port = 0
         protocol = "-1"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    tags {
+      Name = "WorkshopDMZ"
     }
 }
