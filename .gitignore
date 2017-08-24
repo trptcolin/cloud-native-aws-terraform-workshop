@@ -17,3 +17,4 @@ slides/css/theme/*.css
 
 *.tfstate
 *.tfstate.backup
+/.terraform
