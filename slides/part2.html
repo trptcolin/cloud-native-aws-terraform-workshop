@@ -50,7 +50,7 @@
         </section>
         <section>
           <h2>Unreliable platform</h2>
-          <img style="width: 100%" src="images/oh_noes.png" />
+          <img style="width: 70%" src="images/oh_noes.png" />
           <aside class="notes">
             This will happen in your physical datacenter too! Amazon mitigates it somewhat with EBS volumes, which have an annual failure rate of 0.1%-0.2%.
           </aside>
@@ -59,11 +59,16 @@
           <h2>Unreliable platform</h2>
           <ul>
             <li class="fragment">If your system is on the internet, you're on an unreliable platform.</li>
-            <li class="fragment">Amazon regions have a 99.95% SLA for availability (including RDS)...</li>
+            <li class="fragment">EC2 and RDS have a 99.95% SLA for availability...</li>
             <li class="fragment">...but only if you use multiple availability zones.</li>
           </ul>
           <aside class="notes">
-             Networks are subject to partitions. Eric Brewer's CAP theorem tells us that we must trade off consistency vs availability - if we want > 99.95% availability, we can't depend on AWS's multi-AZ primitives. This is not academic - a whole AWS region became unavailable. The Netflix blog post on the 2011 AWS outage is worth reading: http://techblog.netflix.com/2011/04/lessons-netflix-learned-from-aws-outage.html
+            <p>
+              SLA = "Service Level Agreement" - they will give you 10% credit for 99.0 - 99.5% uptime; 25% (RDS)-30% (EC2) for under 99%.
+            </p>
+            <p>
+              If we want better than 99.95% availability, we can't depend on AWS's multi-AZ primitives. This is not academic - a whole AWS region became unavailable. The Netflix blog post on the 2011 AWS outage is worth reading: http://techblog.netflix.com/2011/04/lessons-netflix-learned-from-aws-outage.html
+            </p>
           </aside>
         </section>
         <section>
@@ -74,82 +79,95 @@
             <li class="fragment">Avoid shared host-local state.</li>
           </ul>
           <aside class="notes">
-            Clouds are elastic - you can scale on demand. This must be architected for. Only a "shared nothing" architecture truly allows this. But, at least, we need to keep session state out of the application tier. Image credit: http://howfuckedismydatabase.com/nosql/
+            <p>Some performance benefits, and situations where it's a good idea, to have shared state</p>
+            <p>This is mostly about the web application tier (and mid-tier if applicable), where most of us work - but some databases are achieving high scalability through horizontal scaling as well (see Cassandra, DynamoDB, Hadoop, any data warehouse...)</p>
           </aside>
         </section>
         <section>
-          <h2>Destroy works of art</h2>
+          <h2>Architecting for unreliability</h2>
           <ul>
             <li class="fragment">Hosts should be <em>disposable</em>.</li>
-            <li class="fragment">Provisioning new hosts should be fully automated using versioned config.</li>
-            <li class="fragment">Our infrastructure should automatically detect failures and kill.</li>
-            <li class="fragment">If there's insufficient volatility, we should introduce more (e.g. chaos monkey).</li>
+            <li class="fragment">Provisioning new hosts should be fully automated.</li>
+            <li class="fragment">Our infrastructure should automatically detect failures and remove hosts.</li>
           </ul>
+
+          <aside class="notes">
+            <p>Additional benefit here besides fault tolerance is horizontal scaling.</p>
+            <p>
+              Clouds are elastic - you can scale on demand, but you have to architect to take advantage of it. Only a stateless architecture truly allows this. For example: keep session state out of the application tier.
+            </p>
+          </aside>
         </section>
         <section>
           <h2>Introduce failure</h2>
-          <img style="width:100%" src="images/chubby.jpg">
-          <i>Site Reliability Engineering: How Google Runs Production Systems</i>, p39.
+          <p><img style="width:70%" src="images/chubby.jpg"></p>
+          <p><i>Site Reliability Engineering: How Google Runs Production Systems</i>, p39.</p>
           </ul>
-        </section>
-        <section>
-          <h2>Twelve Factor Apps</h2>
-          <ul>
-            <li>Declarative formats for setup automation, to minimize time and cost for new developers;</li>
-            <li>Clean contract with the underlying operating system, offering maximum portability;</li>
-            <li>Suitable for deployment on modern cloud platforms</li>
-            <li>Minimize divergence between development and production, enabling continuous deployment;</li>
-            <li>Can scale up without significant changes to tooling, architecture, or development practices.</li>
-          </ul>
-          &mdash; Adam Wiggins, <a href="https://12factor.net">https://12factor.net/</a>
           <aside class="notes">
-            Basically, a combination of cloud-native architecture plus continuous delivery.
+            <p>Many of us have heard about Netflix's "Simian Army", including Chaos Monkey, which injects failures in production (!) to make sure systems are prepared to deal w/ failure. It's a fact of life in distributed systems (which we are *all* programming for!), and if we want things to work, we need to test them.</p>
+            <p>This story about Chubby is almost more striking because it's about actual people deciding to break their own system so nobody depends on it being too perfect.</p>
           </aside>
         </section>
         <section>
-          <h2>Cloud Native apps</h2>
-          <ul>
-            <li class="fragment">Make apps stateless so they can scale horizontally and fail arbitrarily;</li>
-            <li class="fragment">Make apps disposable so we can start them up fast and automatically;</li>
-            <li class="fragment">Separate packages from configuration information for all resources (remote or attached);</li>
-            <li class="fragment">Each <a href="http://martinfowler.com/bliki/BoundedContext.html">bounded context</a> gets its own app;</li>
-            <li class="fragment">Apps are independently testable and deployable;</li>
-            <li class="fragment">Treat logging as a remote service;</li>
-            <li class="fragment">Instrument everything! Localizing problems is hard in distributed systems, and some issues are emergent.</li>
-          </ul>
-        </section>
-        <section>
-          <img src="images/ha_aws_system.png" alt="system diagram" height="60%" width="60%" border="0"/>
+          <h2>What are we building?</h2>
+          <img src="images/ha_aws_system.png" alt="system diagram" width="55%" border="0"/>
           <aside class="notes">
-            This is the networking infrastructure we will have built by the end of the class and the key components. Note this doesn't include monitoring, the S3 bucket we deploy from, or the security groups.
+            <p>This is the networking infrastructure we'll build and the key components.</p>
+            <p>Logging, monitoring, alerting, RDS will have to wait.</p>
           </aside>
         </section>
         <section>
-          <h2>Auto scaling groups</h2>
+          <h2>Auto Scaling Groups</h2>
           <img src="http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/images/tutorial_as_elb_architecture.png" style="float:right" width="45%"/>
-          <ul style="width:45%">
-            <li class="fragment">At least two availability zones</li>
-            <li class="fragment">Load balancer</li>
+          <ul>
             <li class="fragment">Auto scaling group</li>
             <li class="fragment">Launch configuration</li>
+            <li class="fragment">Manual scaling</li>
+            <li class="fragment">Scheduled scaling</li>
+            <li class="fragment">Dynamic scaling</li>
           </ul>
+          <aside class="notes">
+            <p>launch config: how you tell ASG what to spin up (including instance type, AMI, user data startup script, etc.)</p>
+            <p>Can scale manually (stick to N instances), scheduled (e.g. peak is 9am-11am), dynamic based on metrics (when load is N% CPU)</p>
+            <p>ASG has rules about how to scale up and down, how to distribute among AZs</p>
+          </aside>
         </section>
         <section>
-          <h2>Elastic Load balancers in AWS</h2>
+          <h2>Elastic Load Balancers</h2>
+          <img src="http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/images/tutorial_as_elb_architecture.png" style="float:right" width="45%"/>
           <ul>
-            <li class="fragment">Two types: classic and ALBs</li>
-            <li class="fragment">ALB (application load balancer): route based on OSI layer 7</li>
-            <li class="fragment">For example: headers, content, path</li>
+            <li class="fragment">At least two availability zones</li>
+            <li class="fragment">Load balancer</li>
+            <li class="fragment">Target group</li>
+            <li class="fragment">Health checks</li>
+          </ul>
+          <aside class="notes">
+            <p>ELB lives in multiple AZs, can balance across AZs too.</p>
+            <p>target group includes health checks</p>
+          </aside>
+        </section>
+        <section>
+          <h2>Elastic Load Balancer types</h2>
+          <ul>
+            <li class="fragment">Two types: classic and ALBs (application load balancers)</li>
+            <li class="fragment">ALB: route based on OSI layer 7 (the "application" layer, e.g. HTTP)</li>
+            <li class="fragment">Can route differently depending on things like: headers, content, path</li>
             <li class="fragment">Also supports HTTP/2 and Websockets</li>
             <li class="fragment">ALBs also have request tracing (create a unique header per request)</li>
           </ul>
+          <aside class="notes">
+            <p>Basically always use ALB unless you need low-level TCP load balancing, which classic ELB can do.</p>
+          </aside>
+        </section>
+        <section>
+          <h2>OK let's do this.</h2>
         </section>
         <section>
           <h2>Second availability zone</h2>
           <pre><code data-noescape>resource "aws_subnet" "public_subnet_2" {
     vpc_id = "${aws_vpc.workshop_vpc.id}"
-    availability_zone = "us-east-1d"
-    cidr_block = "<mark>10.0.X.64/26</mark>"
+    availability_zone = "us-east-1b"
+    cidr_block = "10.0.1.64/26"
 }
 
 resource "aws_route_table_association" "route_subnet_2" {
@@ -157,7 +175,7 @@ resource "aws_route_table_association" "route_subnet_2" {
     route_table_id = "${aws_route_table.workshop_route_table.id}"
 }</code></pre>
           <aside class="notes">
-            Don't forget to add a route for it...
+            <p>So in order to balance and scale across multiple AZs, we need another subnet. If you recall from last time, Each subnet is in exactly one AZ.</p>
           </aside>
         </section>
         <section>
@@ -176,7 +194,7 @@ resource "aws_route_table_association" "route_subnet_2" {
         from_port = 80
         to_port = 80
         protocol = "tcp"
-        cidr_blocks = ["<mark>10.0.X.0/24</mark>"]
+        cidr_blocks = ["10.0.1.0/24"]
     }
 }</code></pre>
         </section>
@@ -209,31 +227,89 @@ resource "aws_route_table_association" "route_subnet_2" {
         security_groups = [ "${aws_security_group.bastion_sg.id}" ]
     }</code></pre>
         </section>
+
         <section>
-          <h2>Application load balancer</h2>
+          <h2>A disposal host: incremental steps</h2>
+          <pre><code data-noescape>resource "aws_instance" "web_sample" {
+    ami = "ami-c481fad3"
+    subnet_id = "${aws_subnet.public_subnet_2.id}"
+    associate_public_ip_address = true
+    key_name = "<mark>[key name]</mark>"
+    instance_type = "t2.micro"
+    vpc_security_group_ids = ["${aws_security_group.web_sg.id}"]
+    tags {
+      Name = "SampleWebHost"
+    }
+}
+output "bastion.public_ip" {
+  value = "${aws_instance.bastion.public_ip}"
+}
+output "sample_web_host.public_ip" {
+  value = "${aws_instance.web_sample.public_ip}"
+}
+output "sample_web_host.private_ip" {
+  value = "${aws_instance.web_sample.private_ip}"
+}</code></pre>
+          <aside class="notes">
+            <p>This will give us a new EC2 instance, same as the bastion, except:
+            <ul>
+              <li>Different subnet/AZ (public_subnet_2, us-east-1b)</li>
+              <li>Different SG (web_sg instead of bastion_sg)</li>
+            </ul>
+            </p>
+            <p>Also adding outputs here so we can see where to SSH</p>
+            <p>I'm more comfortable ensuring small steps work than big ones</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Let's give it a shot!</h2>
+          <p>Is the security group working? <code>ssh ec2-user@<mark>[sample_web_host.public_ip]</mark> -i ~/.ssh/aws</code></p>
+          <p>Does the bastion host allow us to jump in?</p>
+          <ul>
+            <li><code>ssh ec2-user@<mark>[bastion.public_ip]</mark> -i ~/.ssh/aws</code></li>
+            <li>[then, on the bastion host]: <code>ssh <mark>[bastion.private_ip]</mark></code></li>
+            <li>"Permission denied (publickey)"</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>SSH config</h2>
+          <p>On your local machine, in <code>~/.ssh/config</code>:</p>
+          <pre><code data-noescape>Host <mark>[bastion.public_ip]</mark>
+  ForwardAgent yes</code></pre>
+          <p>Starting with SSH'ing to the bastion host, try the bastion-to-web jump again!</p>
+        </section>
+
+        <section>
+          <h2>Now throw the web instance away</h2>
+          <p>Remove the <code>web_sample</code> resource and the related <code>output</code>s (you can leave the bastion <code>output</code> in place)</p>
+          <p>Then run <code>terraform apply terraform</code> and watch the web instance get destroyed.</p>
+        </section>
+
+        <section>
+          <h2>Application Load Balancer and Target Group</h2>
           <pre><code data-noescape>resource "aws_alb" "workshop_alb" {
-  name = "workshop-alb-<mark>[name]</mark>"
+  name = "workshop-alb"
   subnets = ["${aws_subnet.public_subnet_1.id}",
              "${aws_subnet.public_subnet_2.id}"]
   security_groups = ["${aws_security_group.alb_sg.id}"]
 }
 
 resource "aws_alb_target_group" "workshop_alb" {
-  name = "workshop-alb-target-<mark>[name]</mark>"
+  name = "workshop-alb-target"
   vpc_id = "${aws_vpc.workshop_vpc.id}"
   port = 80
   protocol = "HTTP"
   health_check {
     matcher = "200,301"
+    interval = "10"
   }
 }
 </code></pre>
-          <aside class="notes">
-            Note - the target group is not going to show healthy at first. The default install page on Apache httpd sends you a 403. 403 is not a valid "heatlhy" code for a target group.
-          </aside>
         </section>
         <section>
-          <h2>ALB target group</h2>
+          <h2>Wiring up the ALB to the Target Group with a Listener</h2>
 <pre><code data-noescape>resource "aws_alb_listener" "workshop_alb_http" {
   load_balancer_arn = "${aws_alb.workshop_alb.arn}"
   port = 80
@@ -248,11 +324,50 @@ output "alb.dns" {
     value = "${aws_alb.workshop_alb.dns_name}"
 }</code></pre>
   <aside class="notes">
-    The output variable <code>dns_name</code> gives us the FQDN of the load balancer. This is a major advantage of using ELBs - no IP addresses in your DNS entries.
+    <p>The output variable <code>dns_name</code> gives us the FQDN of the load balancer.</p>
+    <p>ELBs don't promise an IP address, only a DNS name. This lets multi-AZ balancing &amp; fault tolerance work.</p>
+    <p>Hit that ALB DNS now, and get a 503. We don't have instances in the target group yet!</p>
   </aside>
         </section>
+
         <section>
-          <h2>Launch configuration</h2>
+          <h2>Building a web server</h2>
+          <pre><code data-noescape>resource "aws_instance" "sample_web_host" {
+    ami = "ami-c481fad3"
+    subnet_id = "${aws_subnet.public_subnet_2.id}"
+    associate_public_ip_address = true
+    key_name = "<mark>[key name]</mark>"
+    instance_type = "t2.micro"
+    vpc_security_group_ids = ["${aws_security_group.web_sg.id}"]
+    tags {
+      Name = "SampleWebHost"
+    }
+    user_data = &lt;&lt;EOF
+#!/usr/bin/env bash
+yum update -y
+yum install -y httpd
+echo '&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Hello World!&lt;/body&gt;&lt;/html&gt;' &gt; /var/www/html/index.html
+service httpd start
+chkconfig httpd on
+EOF
+}</code></pre>
+          <aside class="notes">
+            <p>On a real project we might use something like Packer to build a known-good AMI, but we've also got this spot where we can put custom code</p>
+          </aside>
+        </section>
+
+        <section>
+          <h2>Small cycles: put it in the load balancer</h2>
+          <pre><code>resource "aws_alb_target_group_attachment" "sample_alb_instance" {
+  target_group_arn = "${aws_alb_target_group.workshop_alb.arn}"
+  target_id        = "${aws_instance.sample_web_host.id}"
+  port             = 80
+}</code></pre>
+          <p>Now if we run <code>terraform apply terraform</code>, we can hit the load balancer and see the working page!</p>
+        </section>
+
+        <section>
+          <h2>Auto Scaling: Launch configuration</h2>
           <pre><code data-noescape>resource "aws_launch_configuration" "workshop_launch_conf" {
     image_id = "ami-c481fad3"
     instance_type = "t2.micro"
@@ -265,10 +380,21 @@ output "alb.dns" {
     user_data = &lt;&lt;EOF
 #!/usr/bin/env bash
 yum update -y
-yum install -y httpd24
+yum install -y httpd
+echo '&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Hello World!&lt;/body&gt;&lt;/html&gt;' &gt; /var/www/html/index.html
 service httpd start
+chkconfig httpd on
 EOF
 }</code></pre>
+          <p>Go ahead and remove the sample resources from your terraform file:</p>
+          <ul>
+            <li>the <code>sample_web_host</code> instance</li>
+            <li>the <code>sample_alb_instance</code> target group attachment</li>
+          </ul>
+
+          <aside class="notes">
+            <p>Very similar to our disposable instance</p>
+          </aside>
         </section>
         <section>
           <h2>Auto Scaling Group</h2>
@@ -283,7 +409,16 @@ EOF
     target_group_arns = ["${aws_alb_target_group.workshop_alb.arn}"]
     enabled_metrics = ["GroupInServiceInstances"]
 }</code></pre>
+          <p>Make it so: <code>terraform apply terraform</code></p>
+          <aside class="notes">
+            <p>Enabling GroupInServiceInstances lets us track the number of in-service instances in the group</p>
+          </aside>
         </section>
+
+        <section>
+          <h2>Time for some chaos!</h2>
+        </section>
+
         <section>
           <h2>Review</h2>
           <ul>
@@ -296,6 +431,20 @@ EOF
             <li class="fragment">We provisioned everything purely from versioned Terraform config</li>
           </ul>
         </section>
+
+        <section>
+          <h1>Thanks!</h1>
+          <ul>
+            <li>Colin Jones, CTO at 8th Light</li>
+            <li><a href="https://twitter.com/trptcolin">@trptcolin</a></li>
+          </ul>
+          <h2>See you next time?</h2>
+          <ul>
+            <li>AWS / Terraform Workshop Series #3: Monitoring / Alerting / Log Aggregation</li>
+            <li>September 8, same time, <em>different</em> place (25 East Washington)</li>
+          </ul>
+        </section>
+
       </div>
     </div>
 
