@@ -68,7 +68,11 @@
         </section>
         <section>
           <h2>Scaling horizontally</h2>
-          <img style="width: 95%" src="images/nosql.png"/>
+          <ul>
+            <li class="fragment">Just™ add more servers.</li>
+            <li class="fragment">More automatable than scaling vertically</li>
+            <li class="fragment">Avoid shared host-local state.</li>
+          </ul>
           <aside class="notes">
             Clouds are elastic - you can scale on demand. This must be architected for. Only a "shared nothing" architecture truly allows this. But, at least, we need to keep session state out of the application tier. Image credit: http://howfuckedismydatabase.com/nosql/
           </aside>
