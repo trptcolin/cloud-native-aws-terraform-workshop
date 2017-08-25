@@ -36,16 +36,15 @@
         <section>
           <h2>Today's Goals</h2>
           <ul>
-            <li>Understand architectural implications of building distributed systems</li>
-            <li>Know how the cloud enables building high availability systems</li>
-            <li>Understand the trade-offs involved in building cloud native systems</li>
-            <li>Understand the architecture of auto scaling groups</li>
-            <li>Know how to create an auto scaling group with Terraform</li>
+            <li>Understand some architectural requirements of fault-tolerant, high availability systems</li>
+            <li>Understand the architecture of load balancers and auto scaling groups</li>
+            <li>Know how to create a load balancer and auto scaling group with Terraform</li>
             <li>Be able to configure hosts created by auto scaling groups</li>
+            <li>Practice building infrastructure in incremental steps</li>
           </ul>
         </section>
         <section>
-          <blockquote>Operations at web scale is the ability to consistently create and deploy reliable software to an unreliable platform that scales horizontally.</blockquote>
+          <blockquote>Operations at web scale is the ability to consistently create and deploy reliable software<br/>to an unreliable platform that scales horizontally.</blockquote>
           &mdash; Jesse Robbins, "Master of Disaster" at Amazon, <a href="http://oreil.ly/1HRKUVE">Operations is a Competitive Advantage</a> (O'Reilly)
         </section>
         <section>
@@ -138,6 +137,7 @@
           <ul>
             <li class="fragment">At least two availability zones</li>
             <li class="fragment">Load balancer</li>
+            <li class="fragment">Listener</li>
             <li class="fragment">Target group</li>
             <li class="fragment">Health checks</li>
           </ul>
