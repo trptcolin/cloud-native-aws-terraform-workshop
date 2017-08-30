@@ -26,7 +26,7 @@ The workshop is run as a series of slide decks. The decks are written in HTML, a
 
 ```
 npm install
-grunt serve
+npm start 
 ```
 
 This should run an http server locally and spawn a browser window with the first slide of the workshop. Check out the [reveal.js documentation](https://github.com/hakimel/reveal.js) for more on using reveal.js.
