@@ -65,7 +65,7 @@
         </section>
         <section>
           <h2>CloudWatch</h2>
-          <p>AWS' monitoring service</p>
+          <p>AWS monitoring service</p>
           <ul>
             <li class="fragment">Log aggregation and archiving</li>
             <li class="fragment">Alerting</li>
@@ -84,7 +84,7 @@
         <section>
           <h2>Create SNS topic</h2>
           <pre><code data-noescape>resource "aws_sns_topic" "workshop_alerts" {
-    name = "workshop-alerts-topic-<mark>[name]</mark>"
+    name = "workshop-alerts-topic-notify"
 }
 
 output "sns.arn" {
@@ -95,22 +95,26 @@ output "sns.arn" {
           <h2>Subscribe to your topic</h2>
           <p>You can't subscribe via SMS or email using Terraform, because the endpoint must be authorized. So run <code>terraform apply terraform</code> and note the value of <code>sns.arn</code> it outputs. Then at your command prompt run:</p>
           <pre><code data-noescape>aws sns subscribe --topic-arn <mark>&lt;sns.arn&gt;</mark> --protocol email \<br/>--notification-endpoint "<mark>&lt;email address&gt;</mark>"</code></pre>
-          <p>Check it works:</p>
-          <pre><code data-noescape>aws sns publish --message "Wotcha" --topic <mark>&lt;sns.arn&gt;</mark></code></pre>
+          <p>Wait for the confirmation message and confirm that it's OK to notify you.</p>
+          <p>Then check that it works:</p>
+          <pre><code data-noescape>aws sns publish --message "Hello from SNS" --topic <mark>&lt;sns.arn&gt;</mark></code></pre>
           <aside class="notes">
-            Note that this means you can't use SNS as a general SMS service, because the destination is configured at the infrastructure layer, not at the application layer.
+            <p>Gmail filter: from:(no-reply@sns.amazonaws.com) after:2017/9/4</p>
+            <p>Note that this means you can't use SNS as a general SMS service, because the destination is configured at the infrastructure layer, not at the application layer.
+            </p>
+          </aside>
         </section>
         <section>
-          <h2>Configure the alert</h2>
+          <h2>Configure the alert via a CloudWatch Alarm</h2>
           <pre><code data-noescape>resource "aws_cloudwatch_metric_alarm" "dead_server" {
-    alarm_name = "Less than two healthy hosts in my cluster <mark>[name]</mark>!"
-    comparison_operator = "LessThanThreshold"
-    evaluation_periods = "1"
-    metric_name = "HealthyHostCount"
+    alarm_name = "Less than two healthy hosts in my cluster HelloWorldApp!"
     namespace = "AWS/ApplicationELB"
-    period = "60"
+    metric_name = "HealthyHostCount"
     statistic = "Minimum"
+    comparison_operator = "LessThanThreshold"
     threshold = "2"
+    evaluation_periods = "1"
+    period = "60"
     dimensions {
         LoadBalancer =
             "${aws_alb.workshop_alb.arn_suffix}"
@@ -131,20 +135,55 @@ Then <code>terraform apply terraform</code>
           <ul>
             <li class="fragment">Multiple ways to do this. Chef / Puppet, or AMIs (use Packer)</li>
             <li class="fragment">Simplest possible thing: a script in an S3 bucket</li>
-            <li class="fragment">But our host doesn't have access to S3!</li>
-            <li class="fragment">Give hosts an IAM role with an instance profile</li>
           </ul>
-          <aside class="notes">
-            This is one of my favourite AWS features! The ability to pass roles to boxes. This means we don't need to pass credentials around. So great.
-          </aside>
         </section>
+
+        <section>
+          <h2>S3 Setup (Important!)</h2>
+          <ul>
+            <li class="fragment">Create a new S3 bucket through the AWS console</li>
+            <li class="fragment">S3 bucket names must be globally unique!</li>
+            <li class="fragment">Find/Replace <em>all</em> instances of <code>trptcolin-terraform-workshop</code> in this project with your new bucket name</li>
+            <li class="fragment">Push the code up: <code>cd code && ./deploy.sh</code></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>What about S3 security?</h2>
+          <ul>
+            <li class="fragment">Check out <a href="http://flaws.cloud">http://flaws.cloud/</a> to start thinking about S3 security</li>
+            <li class="fragment">Google "unsecured s3 bucket" for horror stories of exposed customer info</li>
+            <li class="fragment">Problem: Don't want to open S3 buckets to the world</li>
+            <li class="fragment">Solution: Lock it down, but give EC2 hosts access through an IAM role / instance profile</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>IAM Roles</h2>
+          <ul>
+            <li class="fragment">AWS API access without passing credentials around</li>
+            <li class="fragment">Works via EC2 instance metadata</li>
+            <li class="fragment">No need to store AWS credentials on the host!</li>
+            <li class="fragment">Associate roles with EC2 instances or many other services (Lambda, Elastic MapReduce, etc.)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instance metadata</h2>
+          <ul>
+            <li class="fragment">Try SSH'ing into the bastion host</li>
+            <li class="fragment"><code>curl http://169.254.169.254/latest/meta-data/</code></li>
+            <li class="fragment">AWS command-line tools on EC2 instances already know how to get this metadata, but custom tooling may need to be told</li>
+          </ul>
+        </section>
+
         <section>
           <h2>Update Launch Configuration</h2>
           (new sections <i>italicised</i>)
           <pre><code data-noescape>resource "aws_launch_configuration" "workshop_launch_conf" {
     image_id = "ami-c481fad3"
     instance_type = "t2.micro"
-    key_name = "jez"
+    key_name = "Colins-Test-Key"
     security_groups = ["${aws_security_group.web_sg.id}"]
     associate_public_ip_address = true
     lifecycle {
@@ -157,6 +196,7 @@ Then <code>terraform apply terraform</code>
 aws s3 cp s3://trptcolin-terraform-workshop/provision.sh /root/
 bash /root/provision.sh
 EOF</i></code></pre>
+          <p>Don't forget to update both the <code>user_data</code> and the <code>iam_instance_profile</code>!</p>
           <aside class="notes">
             AWS Linux has the AWS command line preinstalled, and will get creds from an instance profile
           </aside>
@@ -164,14 +204,14 @@ EOF</i></code></pre>
         <section>
           <h2>Instance Profiles</h2>
           <pre><code data-noescape>resource "aws_iam_instance_profile" "workshop_profile" {
-    name = "workshop_profile_<mark>[name]</mark>"
+    name = "workshop_profile_web"
     roles = ["${aws_iam_role.ec2_role.name}"]
 }</code></pre>
         </section>
         <section>
           <h2>Define Role</h2>
           <pre><code data-noescape>resource "aws_iam_role" "ec2_role" {
-    name = "ec2_role_<mark>[name]</mark>"
+    name = "ec2_role_web"
     assume_role_policy = &lt;&lt;EOF
 {
   "Version": "2012-10-17",
@@ -190,7 +230,7 @@ EOF
         <section>
           <h2>Define Policy</h2>
           <pre><code data-noescape>resource "aws_iam_role_policy" "s3_bucket_policy" {
-    name = "s3_deploy_bucket_policy_<mark>[name]</mark>"
+    name = "s3_deploy_bucket_policy_workshop"
     role = "${aws_iam_role.ec2_role.id}"
     policy = &lt;&lt;EOF
 {
@@ -224,7 +264,7 @@ aws ec2 terminate-instances --instance-ids ????</code></pre>
         </section>
         <section>
           <h2>Hello, World</h2>
-          After a couple of minutes, we should get an "OK" via SMS, and our host should be up. While we're waiting, let's take a quick look at what's in the S3 bucket.
+          After a couple of minutes, we should get an "OK" via SNS, and our host should be up. While we're waiting, let's take a quick look at what's in the S3 bucket.
           <aside class="notes">
             Go through the contents of /code/scripts in this repo
           </aside>
