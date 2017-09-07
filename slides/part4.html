@@ -59,37 +59,7 @@ Then <code>terraform apply terraform</code>
           </aside>
         </section>
         <section>
-          <h2>Let's set up logging</h2>
-          <pre><code data-noescape>resource "aws_iam_role_policy" "s3_bucket_policy" {
-...
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [ "s3:Get*", "s3:List*" ],
-      "Resource": [ "arn:aws:s3:::trptcolin-terraform-workshop",
-                    "arn:aws:s3:::trptcolin-terraform-workshop/*" ]
-    }<mark>,
-    {
-      "Effect": "Allow",
-      "Action": [ "logs:CreateLogGroup", "logs:CreateLogStream",
-        "logs:PutLogEvents", "logs:DescribeLogStreams" ],
-      "Resource": [ "arn:aws:logs:*:*:*" ]
-    }</mark>
-  ]
-}
-EOF
-}</code></pre>
-<p>Don't miss the comma! <code>terraform apply terraform</code></p>
-        </section>
-        <section>
-          <h2>Now we can see logs</h2>
-          <img src="images/cloudwatch_logs.png"/>
-          <aside class="notes">
-            Note: this is not just magic. In <code>/code/scripts</code> in this repo, we install a cloudwatch agent in <code>provision.sh</code>, and the config is in <code>cloudwatch.conf</code>
-          </aside>
-        </section>
-        <section>
-          <p>Now we have a failing test, and in the logs you should see something like <code>Couldn't create database connection with URI: Error: SQLSTATE[HY000] [2002] No such file or directory</code></p>
+          <p>Now we have a failing test, and in the CloudWatch logs you should see something like <code>Couldn't create database connection with URI: Error: SQLSTATE[HY000] [2002] No such file or directory</code></p>
           <p>Note: <b>We're not going to create databases for everyone.</b> For the rest of the class, the instructor will run the code.</p>
           <aside class="notes">This is because we can't provide credentials separately for each participant without creating S3 buckets for everyone, and it's too much of a drag for a 1-day workshop. Instructors should create the db up front, and supply the correct credentials in order to make the alert stop.</aside>
         </section>

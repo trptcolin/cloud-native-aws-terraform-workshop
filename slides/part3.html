@@ -270,6 +270,45 @@ aws ec2 terminate-instances --instance-ids ????</code></pre>
           </aside>
         </section>
         <section>
+          <h2>Let's get our logging working</h2>
+          <pre><code data-noescape>resource "aws_iam_role_policy" "s3_bucket_policy" {
+...
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [ "s3:Get*", "s3:List*" ],
+      "Resource": [ "arn:aws:s3:::trptcolin-terraform-workshop",
+                    "arn:aws:s3:::trptcolin-terraform-workshop/*" ]
+    }<mark>,
+    {
+      "Effect": "Allow",
+      "Action": [ "logs:CreateLogGroup", "logs:CreateLogStream",
+        "logs:PutLogEvents", "logs:DescribeLogStreams" ],
+      "Resource": [ "arn:aws:logs:*:*:*" ]
+    }</mark>
+  ]
+}
+EOF
+}</code></pre>
+<p>Don't miss the comma! <code>terraform apply terraform</code></p>
+        </section>
+        <section>
+          <h2>Now we can see (and search!) aggregated logs</h2>
+          <img src="images/cloudwatch_logs.png"/>
+          <p>Search tips: <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html">http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html</a></p>
+          <aside class="notes">
+            Note: this is not just magic. In <code>/code/scripts</code> in this repo, we install a cloudwatch agent in <code>provision.sh</code>, and the config is in <code>cloudwatch.conf</code>.
+            Check out log aggregation for access_log. Searching for something like [ip, user, username, timestamp, request, status_code = 4*, bytes] can be fun to see attempts attacks on a brand-new host.
+          </aside>
+        </section>
+
+        <section>
+          <h2>CloudWatch metrics</h2>
+          <img src="images/cloudwatch_metrics.png"/>
+          <p>Let's see what kind of metrics we get from ELB!</p>
+        </section>
+
+        <section>
           <h2>Refactoring</h2>
           <blockquote>...is a disciplined technique for restructuring an existing body of code, altering its internal structure without changing its external behavior.</blockquote>
           &mdash; Martin Fowler, <a href="https://www.refactoring.com/">https://www.refactoring.com/</a>
@@ -287,16 +326,18 @@ aws ec2 terminate-instances --instance-ids ????</code></pre>
             <li>Then the autoscaling group and ALB will go into <code>autoscaling.tf</code></li>
             <li>Finally, we'll put alerting into <code>monitoring.tf</code>.</li>
           </ul>
-          <p>When you're done, run <code>terraform apply terraform</code> and make sure everything works.</p>
+          <p>When you're done, run <code>terraform plan terraform</code> and make sure nothing will change.</p>
         </section>
         <section>
           <h2>Review</h2>
           <ul>
-            <li class="fragment">We introduced test-driven development</li>
+            <li class="fragment">We looked at test-driven development by analogy</li>
             <li class="fragment">We created an alert</li>
-            <li class="fragment">We showed how to pass an AWS role to an EC2 host</li>
+            <li class="fragment">We passed an AWS role to an EC2 host</li>
             <li class="fragment">We built a provisioning and deployment system</li>
-            <li class="fragment">We refactored our code</li>
+            <li class="fragment">We set up log aggregation</li>
+            <li class="fragment">We saw how to view metrics</li>
+            <li class="fragment">We refactored our infrastructure code</li>
           </ul>
         </section>
       </div>
