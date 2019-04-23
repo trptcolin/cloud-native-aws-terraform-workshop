@@ -1,4 +1,5 @@
 /* global module:false */
+const sass = require('node-sass');
 module.exports = function(grunt) {
 	var port = grunt.option('port') || 8000;
 	var base = grunt.option('base') || '.';
@@ -32,6 +33,9 @@ module.exports = function(grunt) {
 		},
 
 		sass: {
+      options: {
+        implementation: sass,
+      },
 			core: {
 				files: {
 					'css/reveal.css': 'css/reveal.scss',

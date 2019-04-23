@@ -28,7 +28,7 @@
     "socket.io": "^2.1.1"
   },
   "devDependencies": {
-    "grunt": "^1.0.3",
+    "grunt": "^1.0.4",
     "grunt-autoprefixer": "~3.0.3",
     "grunt-contrib-connect": "^1.0.2",
     "grunt-contrib-cssmin": "~0.14.0",
@@ -36,9 +36,9 @@
     "grunt-contrib-qunit": "~1.2.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-sass": "~1.1.0-beta",
+    "grunt-sass": "^3.0.2",
     "grunt-zip": "~0.17.1",
-    "node-sass": "^4.9.0"
+    "node-sass": "^4.11.0"
   },
   "license": "MIT"
 }
